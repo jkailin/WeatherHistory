@@ -3,36 +3,23 @@ package com.example.j.weatherhistory;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.google.gson.JsonObject;
-
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-//import javax.net.ssl.HttpsURLConnection;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -192,7 +179,7 @@ public class LocationTracker extends Service {
                 DateFormat df = new SimpleDateFormat("d MMM yyyy, HH:mm:ss");
                 String date = df.format(Calendar.getInstance().getTime());
 
-                String dateAndWeather = date + "-- (" + Double.toString(latitude) +
+                String dateAndWeather = date + "--(" + Double.toString(latitude) +
                         "," + Double.toString(longitude) + ")--"
                         + weather.getString("description");
 
