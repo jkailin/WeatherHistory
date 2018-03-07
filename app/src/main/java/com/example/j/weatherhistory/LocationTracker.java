@@ -24,6 +24,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -183,7 +187,16 @@ public class LocationTracker extends Service {
                 myConnection.disconnect();
 
                 JSONObject response = new JSONObject(responseString.toString());
-                return response.getJSONArray("weather").getJSONObject(0).getString("main") + "\n";
+                JSONObject weather = response.getJSONArray("weather").getJSONObject(0);
+
+                DateFormat df = new SimpleDateFormat("d MMM yyyy, HH:mm:ss");
+                String date = df.format(Calendar.getInstance().getTime());
+
+                String dateAndWeather = date + "-- (" + Double.toString(latitude) +
+                        "," + Double.toString(longitude) + ")--"
+                        + weather.getString("description");
+
+                return dateAndWeather + "\n";
             } else {
                 Log.e(TAG, "" + myConnection.getResponseCode());
                 return "";
