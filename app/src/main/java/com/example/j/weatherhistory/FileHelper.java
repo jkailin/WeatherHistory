@@ -12,7 +12,6 @@ import java.io.InputStreamReader;
 
 public class FileHelper {
 
-    private static final int READ_BLOCK_SIZE = 100;
     private FileOutputStream outputStream;
 
     public FileHelper() {
@@ -21,25 +20,20 @@ public class FileHelper {
 
     public String readFile( Context context) {
         try {
-            FileInputStream fileIn = context.openFileInput(context.getString(R.string.data_file));
-            InputStreamReader InputRead = new InputStreamReader(fileIn);
+            FileInputStream file = context.openFileInput(context.getString(R.string.data_file));
+            StringBuffer fileContent = new StringBuffer("");
 
-            char[] inputBuffer = new char[READ_BLOCK_SIZE];
-            String s = "";
-            int charRead;
+            byte[] buffer = new byte[1024];
+            int pos;
 
-            while ((charRead = InputRead.read(inputBuffer)) > 0) {
-                // char to string conversion
-                String readstring = String.copyValueOf(inputBuffer, 0, charRead);
-                s += readstring;
+            while ((pos = file.read(buffer)) != -1) {
+                fileContent.append(new String(buffer, 0, pos));
             }
-            InputRead.close();
-            return s;
-        }
-        catch (Exception e) {
+            return fileContent.toString();
+        }catch(Exception e) {
             return "no data available";
-
         }
+
     }
 
     public void writeFile(Context context, String data){
