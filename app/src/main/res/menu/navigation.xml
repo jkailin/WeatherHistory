@@ -7,8 +7,12 @@
         android:title="abc"
         app:showAsAction="ifRoom" />
     <!-- Settings, should always be in the overflow -->
-    <item android:id="@+id/action_search"
+    <item android:id="@+id/delete"
         android:icon="@drawable/ic_clear_black_24dp"
+        android:title="abc"
+        app:showAsAction="ifRoom" />
+    <item android:id="@+id/email"
+        android:icon="@drawable/ic_textsms_black_24dp"
         android:title="abc"
         app:showAsAction="ifRoom" />
 </menu>

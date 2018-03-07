@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
-
+            displayData(fileHelper.readFile(this));
             startService(new Intent(this, LocationTracker.class));
             Log.e(TAG, "Service Started");
 
@@ -54,19 +54,23 @@ public class MainActivity extends AppCompatActivity {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.refresh:
-                displayData();
+                displayData(fileHelper.readFile(this));
                 return true;
-            case R.id.action_search:
+            case R.id.delete:
                 fileHelper.deleteFile(this);
+                displayData(fileHelper.readFile(this));
+                return true;
+            case R.id.email:
+                sendSMS(fileHelper.readFile(this));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    public void displayData() {
+    public void displayData(String s) {
 
-        mMsgView.setText(fileHelper.readFile(this));
+        mMsgView.setText(s);
     }
 
     // Show message asking for GPS
@@ -89,6 +93,11 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
+    }
+
+    public void sendSMS(String s){
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
     }
 
 }
