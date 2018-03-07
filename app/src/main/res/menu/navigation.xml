@@ -4,15 +4,15 @@
     <!-- Search, should appear as action button -->
     <item android:id="@+id/refresh"
         android:icon="@drawable/ic_refresh_black_24dp"
-        android:title="abc"
+        android:title="refresh"
         app:showAsAction="ifRoom" />
     <!-- Settings, should always be in the overflow -->
     <item android:id="@+id/delete"
         android:icon="@drawable/ic_clear_black_24dp"
-        android:title="abc"
+        android:title="delete"
         app:showAsAction="ifRoom" />
     <item android:id="@+id/email"
-        android:icon="@drawable/ic_textsms_black_24dp"
-        android:title="abc"
+        android:icon="@drawable/ic_email_black_24dp"
+        android:title="email"
         app:showAsAction="ifRoom" />
 </menu>

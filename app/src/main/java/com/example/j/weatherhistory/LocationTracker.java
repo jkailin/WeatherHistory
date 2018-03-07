@@ -38,7 +38,7 @@ public class LocationTracker extends Service {
 
     }
 
-    // keeps track of location changes
+    // keeps track of location changes using device GPS
     private class LocationListener implements android.location.LocationListener {
         Location lastLocation;
 
@@ -47,6 +47,7 @@ public class LocationTracker extends Service {
             lastLocation = new Location(provider);
         }
 
+        // update location if a location change is detected
         @Override
         public void onLocationChanged(Location location) {
             lastLocation.set(location);
@@ -89,12 +90,12 @@ public class LocationTracker extends Service {
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
 
-        // initialize location tracking and read/write
+        // initialize scheduled location tracking and file read/write
         locationListener = new LocationListener(LocationManager.GPS_PROVIDER);
         scheduler = Executors.newScheduledThreadPool(1);
         fileHelper = new FileHelper();
 
-        // checks the GPS every 10 seconds
+        // checks the GPS at certain interval. Set to 10s for testing.
         try {
             mLocationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
@@ -102,21 +103,20 @@ public class LocationTracker extends Service {
                     0,
                     locationListener
             );
-            //mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         } catch (java.lang.SecurityException e) {
             e.printStackTrace();
 
         }
-        //mLocationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER,locationListener,null);
 
         recordLocation(locationListener);
-
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        // ends long running tasks
+        scheduler.shutdown();
         if (mLocationManager != null) {
             try {
                 mLocationManager.removeUpdates(locationListener);
@@ -126,25 +126,24 @@ public class LocationTracker extends Service {
         }
     }
 
-
+    // starts scheduler to record locations at an intervals
     public void recordLocation(final LocationListener locationListener) {
         final Runnable recorder = new Runnable() {
             public void run() {
-                String weather = getWeather(locationListener.getLastLocation().getLatitude(), locationListener.getLastLocation().getLongitude());
-                /*String s = locationListener.getLastLocation().getLatitude() + ","
-                        + locationListener.getLastLocation().getLongitude() + "\n";*/
+                String weather = getWeather(locationListener.getLastLocation().getLatitude(),
+                        locationListener.getLastLocation().getLongitude());
                 fileHelper.writeFile(getApplicationContext(), weather);
 
             }
         };
 
-        scheduler.scheduleAtFixedRate(recorder, 10, 10, SECONDS);
+        scheduler.scheduleAtFixedRate(recorder, 3, 10, SECONDS);
     }
 
-
+    // returns weather information at a particular latitude/longitude
     public String getWeather(double latitude, double longitude) {
         try {
-
+            // url for REST API call, trusted CA
             String url = "https://api.openweathermap.org/data/2.5/weather?APPID=" +
                     getApplicationContext().getString(R.string.weather_api_key) +
                     "&lat=" +
@@ -152,18 +151,21 @@ public class LocationTracker extends Service {
                     "&lon=" +
                     Double.toString(longitude);
 
+            // setup connection parameters
             URL call = new URL(url);
-            HttpsURLConnection myConnection = (HttpsURLConnection) call.openConnection();
-            myConnection.setRequestMethod("GET");
+            HttpsURLConnection connection = (HttpsURLConnection) call.openConnection();
+            connection.setRequestMethod("GET");
             //myConnection.setConnectTimeout(5);
 
-            // should work but doesn't
+            // ???
             /*myConnection.setRequestProperty("APPID", "944aaef369c68f1287a26953846af089");
             myConnection.setRequestProperty("lat", *//*Double.toString(latitude)*//*"33");
             myConnection.setRequestProperty("lon", *//*Double.toString(longitude)*//*"44");*/
 
-            if (myConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                InputStreamReader inputStreamReader = new InputStreamReader(myConnection.getInputStream(), "UTF-8");
+            // check that the call has a valid response
+            if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                // read the information from the call
+                InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream(), "UTF-8");
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
                 StringBuilder responseString= new StringBuilder();
                 String buf;
@@ -171,21 +173,24 @@ public class LocationTracker extends Service {
                 while ((buf = bufferedReader.readLine()) != null)
                     responseString.append(buf);
 
-                myConnection.disconnect();
+                connection.disconnect();
 
+                // convert to JSON to be parsed
                 JSONObject response = new JSONObject(responseString.toString());
                 JSONObject weather = response.getJSONArray("weather").getJSONObject(0);
 
+                // get timestamp for the location call
                 DateFormat df = new SimpleDateFormat("d MMM yyyy, HH:mm:ss");
                 String date = df.format(Calendar.getInstance().getTime());
 
+                // combine time and weather information
                 String dateAndWeather = date + "--(" + Double.toString(latitude) +
                         "," + Double.toString(longitude) + ")--"
                         + weather.getString("description");
 
                 return dateAndWeather + "\n";
             } else {
-                Log.e(TAG, "" + myConnection.getResponseCode());
+                Log.e(TAG, "" + connection.getResponseCode());
                 return "";
             }
 

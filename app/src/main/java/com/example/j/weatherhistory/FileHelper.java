@@ -18,6 +18,7 @@ public class FileHelper {
 
     }
 
+    // returns file as string
     public String readFile( Context context) {
         try {
             FileInputStream file = context.openFileInput(context.getString(R.string.data_file));
@@ -36,6 +37,7 @@ public class FileHelper {
 
     }
 
+    // writes to file
     public void writeFile(Context context, String data){
         try {
             // append mode stores in app private data
@@ -47,6 +49,7 @@ public class FileHelper {
         }
     }
 
+    // deletes file
     public void deleteFile(Context context) {
         context.deleteFile(context.getString(R.string.data_file));
     }
