@@ -143,15 +143,15 @@ public class LocationTracker extends Service {
     // returns weather information at a particular latitude/longitude
     public String getWeather(double latitude, double longitude) {
         try {
-            // url for REST API call, trusted CA
+            // url for REST API call
             String url = "https://api.openweathermap.org/data/2.5/weather?APPID=" +
-                    getApplicationContext().getString(R.string.weather_api_key) +
+                    BuildConfig.WEATHER_KEY +
                     "&lat=" +
                     Double.toString(latitude) +
                     "&lon=" +
                     Double.toString(longitude);
 
-            // setup connection parameters
+            // setup connection parameters with secure connection
             URL call = new URL(url);
             HttpsURLConnection connection = (HttpsURLConnection) call.openConnection();
             connection.setRequestMethod("GET");
