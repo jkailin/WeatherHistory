@@ -34,10 +34,6 @@ public class LocationTracker extends Service {
     FileHelper fileHelper;
     LocationListener locationListener;
 
-    public LocationTracker() {
-
-    }
-
     // keeps track of location changes using device GPS
     private class LocationListener implements android.location.LocationListener {
         Location lastLocation;

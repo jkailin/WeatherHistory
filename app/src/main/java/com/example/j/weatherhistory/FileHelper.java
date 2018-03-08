@@ -4,7 +4,6 @@ import android.content.Context;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 
 /**
  * Created by j on 3/6/18.

@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
                                            @NonNull int[] grantResults) {
         if (requestCode == 0) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                displayData(fileHelper.readFile(this));
                 startService(new Intent(this, LocationTracker.class));
             } else {
                 Log.e(TAG, "no GPS, SMS permission");
