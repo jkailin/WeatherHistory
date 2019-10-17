@@ -153,11 +153,6 @@ public class LocationTracker extends Service {
             connection.setRequestMethod("GET");
             //myConnection.setConnectTimeout(5);
 
-            // ???
-            /*myConnection.setRequestProperty("APPID", "944aaef369c68f1287a26953846af089");
-            myConnection.setRequestProperty("lat", *//*Double.toString(latitude)*//*"33");
-            myConnection.setRequestProperty("lon", *//*Double.toString(longitude)*//*"44");*/
-
             // check that the call has a valid response
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 // read the information from the call
